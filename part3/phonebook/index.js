@@ -62,9 +62,15 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
     console.log('Got POST request')
-    if(!body.content) {
+    if(!request.body.name || !request.body.number) {
         return response.status(400).json({
-          error: 'content missing'
+          error: 'Missing name or number'
+        })
+    }
+    const duplicate = persons.find(p => p.name === request.body.name)
+    if(duplicate) {
+        return response.status(400).json({
+            error: 'Name already exists'
         })
     }
     const newPerson = {
