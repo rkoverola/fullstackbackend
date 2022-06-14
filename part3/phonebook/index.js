@@ -3,7 +3,7 @@ const app = express()
 
 app.use(express.json())
 
-const persons = [
+let persons = [
     { 
       "id": 1,
       "name": "Arto Hellas", 
@@ -27,19 +27,33 @@ const persons = [
 ]
 
 app.get('/api/persons', (request, response) => {
+    console.log('Got GET request')
     response.json(persons)
 })
 
 app.get('/api/persons/:id', (request, response) => {
+    console.log('Got GET request')
     const id = Number(request.params.id)
     const person = persons.find(p => p.id === id)
-    response.json(person)
+    if(person) {
+        response.json(person)
+    } else {
+        response.status(404).end()
+    }
 })
 
 app.get('/info', (request, response) => {
+    console.log('Got GET request')
     const infoString = `<div>Phonebook has info for ${persons.length} people.</div>`
     const dateString = `<div>${new Date()}</div>`
     response.send(infoString + dateString)
+})
+
+app.delete('/api/persons/:id', (request, response) => {
+    console.log('Got DELETE request')
+    const id = Number(request.params.id)
+    persons = persons.filter(p => p.id !== id)
+    response.status(204).end()
 })
 
 const PORT = 3001
