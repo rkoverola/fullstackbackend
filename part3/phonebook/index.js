@@ -1,7 +1,9 @@
 const express = require('express')
-const app = express()
+const morgan = require('morgan')
 
+const app = express()
 app.use(express.json())
+app.use(morgan('tiny'))
 
 let persons = [
     { 
@@ -31,12 +33,10 @@ const generateId = () => {
 }
 
 app.get('/api/persons', (request, response) => {
-    console.log('Got GET request')
     response.json(persons)
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    console.log('Got GET request')
     const id = Number(request.params.id)
     const person = persons.find(p => p.id === id)
     if(person) {
@@ -47,21 +47,18 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.get('/info', (request, response) => {
-    console.log('Got GET request')
     const infoString = `<div>Phonebook has info for ${persons.length} people.</div>`
     const dateString = `<div>${new Date()}</div>`
     response.send(infoString + dateString)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    console.log('Got DELETE request')
     const id = Number(request.params.id)
     persons = persons.filter(p => p.id !== id)
     response.status(204).end()
 })
 
 app.post('/api/persons', (request, response) => {
-    console.log('Got POST request')
     if(!request.body.name || !request.body.number) {
         return response.status(400).json({
           error: 'Missing name or number'
