@@ -26,6 +26,10 @@ let persons = [
     }
 ]
 
+const generateId = () => {
+    return Math.floor((Math.random() * 1000000))
+}
+
 app.get('/api/persons', (request, response) => {
     console.log('Got GET request')
     response.json(persons)
@@ -54,6 +58,22 @@ app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     persons = persons.filter(p => p.id !== id)
     response.status(204).end()
+})
+
+app.post('/api/persons', (request, response) => {
+    console.log('Got POST request')
+    if(!body.content) {
+        return response.status(400).json({
+          error: 'content missing'
+        })
+    }
+    const newPerson = {
+        id: generateId(),
+        name: request.body.name,
+        number: request.body.number
+    }
+    persons = persons.concat(newPerson)
+    response.json(newPerson)
 })
 
 const PORT = 3001
