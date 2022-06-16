@@ -68,25 +68,20 @@ app.delete('/api/persons/:id', (request, response) => {
     response.status(204).end()
 })
 
+// NOTE: No duplicate checking
 app.post('/api/persons', (request, response) => {
     if(!request.body.name || !request.body.number) {
         return response.status(400).json({
           error: 'Missing name or number'
         })
     }
-    const duplicate = persons.find(p => p.name === request.body.name)
-    if(duplicate) {
-        return response.status(400).json({
-            error: 'Name already exists'
-        })
-    }
-    const newPerson = {
-        id: generateId(),
+    const newPerson = new Person({
         name: request.body.name,
         number: request.body.number
-    }
-    persons = persons.concat(newPerson)
-    response.json(newPerson)
+    })
+    newPerson.save().then(result => {
+        response.json(result)
+    })
 })
 
 const PORT = process.env.PORT
