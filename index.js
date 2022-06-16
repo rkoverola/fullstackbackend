@@ -75,22 +75,30 @@ app.delete('/api/persons/:id', (request, response) => {
         .catch(error => next(error))
 })
 
-// NOTE: No duplicate checking
-// FIXME: Move error handling to handler?
 app.post('/api/persons', (request, response, next) => {
     if(!request.body.name || !request.body.number) {
         return response.status(400).json({
           error: 'Missing name or number'
         })
     }
-    const newPerson = new Person({
-        name: request.body.name,
-        number: request.body.number
-    })
-    newPerson.save().then(result => {
-        response.json(result)
-    })
-    .catch(error => next(error))
+    Person.findOne({name: request.body.name})
+        .then(result => {
+            if(result) {
+                response.status(400).json({
+                    error: 'Name already in phonebook'
+                })
+            } else {
+                const newPerson = new Person({
+                    name: request.body.name,
+                    number: request.body.number
+                })
+                newPerson.save().then(result => {
+                    response.json(result)
+                })
+                .catch(error => next(error))
+            }
+        })
+        .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
@@ -98,7 +106,7 @@ app.put('/api/persons/:id', (request, response, next) => {
         name: request.body.name,
         number: request.body.number
     }
-    Person.findByIdAndUpdate(request.params.id, updatedPerson, { new: true })
+    Person.findByIdAndUpdate(request.params.id, updatedPerson, { new: true, runValidators: true })
         .then(result => {
             response.json(result)
         })
