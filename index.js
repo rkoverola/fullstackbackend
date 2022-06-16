@@ -73,6 +73,7 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 // NOTE: No duplicate checking
+// FIXME: Move error handling to handler?
 app.post('/api/persons', (request, response) => {
     if(!request.body.name || !request.body.number) {
         return response.status(400).json({
@@ -87,6 +88,18 @@ app.post('/api/persons', (request, response) => {
         response.json(result)
     })
     .catch(error => next(error))
+})
+
+app.put('/api/persons/:id', (request, response, next) => {
+    const updatedPerson = {
+        name: request.body.name,
+        number: request.body.number
+    }
+    Person.findByIdAndUpdate(request.params.id, updatedPerson, { new: true })
+        .then(result => {
+            response.json(result)
+        })
+        .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
