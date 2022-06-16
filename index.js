@@ -59,9 +59,12 @@ app.get('/api/persons/:id', (request, response, next) => {
 })
 
 app.get('/info', (request, response) => {
-    const infoString = `<div>Phonebook has info for ${persons.length} people.</div>`
-    const dateString = `<div>${new Date()}</div>`
-    response.send(infoString + dateString)
+    Person.find({}).then(result => {
+        const infoString = `<div>Phonebook has info for ${result.length} people.</div>`
+        const dateString = `<div>${new Date()}</div>`
+        response.send(infoString + dateString)
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response) => {
