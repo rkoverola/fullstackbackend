@@ -77,7 +77,7 @@ app.delete('/api/persons/:id', (request, response) => {
 
 // NOTE: No duplicate checking
 // FIXME: Move error handling to handler?
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     if(!request.body.name || !request.body.number) {
         return response.status(400).json({
           error: 'Missing name or number'
@@ -114,6 +114,8 @@ const errorHandler = (error, request, response, next) => {
     console.log(error.message)
     if(error.name === 'CastError') {
         return response.status(400).send({error: 'Malformatted id'})
+    } else if(error.name === 'ValidationError') {
+        return response.status(400).send({error: error.message})
     }
     next(error)
 }
