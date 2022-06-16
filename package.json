@@ -9,7 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:front": "rm -rf build && cd ~/git/fullstackopen/part2/phonebook && npm run build && cp -r build ~/git/fullstackbackend",
     "deploy": "git push heroku main",
-    "deploy:all": "npm run build:front && git commit -am uibuild && npm run deploy"
+    "deploy:all": "npm run build:front && git commit -am uibuild && npm run deploy",
+    "lint": "eslint ."
   },
   "author": "Risto Koverola",
   "license": "MIT",
